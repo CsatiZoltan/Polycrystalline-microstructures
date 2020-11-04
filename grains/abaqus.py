@@ -430,9 +430,11 @@ class Material:
             old = source.readlines()
         if a.state['begin'] == a.state['end'] + 1:  # input file does not contain materials
             raise Exception('Material does not exist.')
-        sections = []
-        for material in a.materials.keys():
-            sections.append('*SOLID SECTION, ELSET={0}, MATERIAL={0}\n'.format(material))
+        sections = [
+            '*SOLID SECTION, ELSET={0}, MATERIAL={0}\n'.format(material)
+            for material in a.materials.keys()
+        ]
+
         new = old + sections
         if not output_file:
             name, extension = os.path.splitext(inp_file)
@@ -1180,13 +1182,18 @@ class Procedure:
 
         """
         for step_name, modules in self.steps.items():
-            abaqus_format = ['\n** -------------------------------------------------------------\n']
-            abaqus_format.append('**\n** STEP: {0}\n**\n'.format(step_name))
+            abaqus_format = [
+                '\n** -------------------------------------------------------------\n',
+                '**\n** STEP: {0}\n**\n'.format(step_name),
+            ]
+
             nlgeom = modules['step_options']['nlgeom']
             increment = modules['step_options']['inc']
             abaqus_format.append('*Step, name={0}, nlgeom={1}, inc={2}\n'
                                  .format(step_name, nlgeom, increment))
             for module_name, module_items in modules.items():
+                if module_name == 'step_options':
+                    continue
                 if module_name == 'analysis':
                     abaqus_format.append('*Static\n')
                     abaqus_format.append(','.join(module_items) + '\n')
@@ -1196,7 +1203,7 @@ class Procedure:
                         abaqus_format.append('** Name: {0}\n'.format(bc_name))
                         abaqus_format.append('*Boundary\n')
                         abaqus_format.append(','.join(bc) + '\n')
-                elif module_name != 'step_options':
+                else:
                     raise Exception('Currently only boundary conditions and analysis types are '
                                     'supported.')
             abaqus_format.append('*End Step\n')

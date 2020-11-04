@@ -543,10 +543,7 @@ class TriMesh(Mesh):
         cell_area
 
         """
-        area = 0
-        for cell in self.cell_sets[cell_set]:
-            area += self.cell_area(cell)
-        return area
+        return sum(self.cell_area(cell) for cell in self.cell_sets[cell_set])
 
     def plot(self, *args, **kwargs):
         """Plots the mesh.
@@ -615,7 +612,7 @@ class TriMesh(Mesh):
         method_options, matplotlib_options = parse_kwargs(kwargs, TriMesh.plot_options)
 
         # Plot the cells
-        ax = method_options['ax'] if method_options['ax'] else plt.figure().add_subplot()
+        ax = method_options['ax'] or plt.figure().add_subplot()
         ax.set_aspect('equal')
         ax.triplot(self.vertices[:, 0], self.vertices[:, 1], self.cells, *args,
                    **matplotlib_options)
@@ -717,7 +714,7 @@ class TriMesh(Mesh):
         if component not in range(n_component):
             raise ValueError('Component must be in [0, {0}].'.format(n_component-1))
         method_options, _ = parse_kwargs(kwargs, TriMesh.plot_options)
-        ax = method_options['ax'] if method_options['ax'] else plt.figure().add_subplot()
+        ax = method_options['ax'] or plt.figure().add_subplot()
         ax.set_aspect('equal')
         ax.tricontourf(self.vertices[:, 0], self.vertices[:, 1], field[:, component], 1000)
         if show_mesh:
@@ -745,9 +742,7 @@ class TriMesh(Mesh):
         # Cell-vertex connectivities
         element_type = 'CPS3'  # 3-node linear plane stress element; can be changed in Abaqus
         inp_file += '*ELEMENT, TYPE=' + element_type + '\n'
-        global_elem_num = 0
-        for elem_vertices in self.cells:
-            global_elem_num += 1
+        for global_elem_num, elem_vertices in enumerate(self.cells, start=1):
             # TODO: avoid reallocation by temporary strings as done below
             inp_file += str(global_elem_num) + ', ' + str(list(elem_vertices+1))[1:-1] + '\n'
 
@@ -1155,7 +1150,7 @@ class Polygon:
 
         """
         method_options, matplotlib_options = parse_kwargs(kwargs, Polygon.plot_options)
-        ax = method_options['ax'] if method_options['ax'] else plt.figure().add_subplot()
+        ax = method_options['ax'] or plt.figure().add_subplot()
         ax.set_aspect('equal')
         vertex_idx = np.arange(-1, self.n_vertex)  # close the polygon
         ax.plot(self.vertices[vertex_idx, 0], self.vertices[vertex_idx, 1],

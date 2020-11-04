@@ -250,11 +250,7 @@ def polygon_orientation(polygon):
     for idx, vertex in enumerate(polygon):
         next_vertex = polygon[(idx + 1) % n_vertex]  # allow indexing past the last vertex
         edge_sum += (next_vertex[0] - vertex[0]) * (next_vertex[1] + vertex[1])
-    if edge_sum > 0:
-        orientation = 'cw'
-    else:
-        orientation = 'ccw'
-    return orientation
+    return 'cw' if edge_sum > 0 else 'ccw'
 
 
 def branches2boundary(branches, orientation='ccw'):
@@ -321,7 +317,7 @@ def branches2boundary(branches, orientation='ccw'):
     first_vertex = branches[last_branch][0, :]
     last_vertex = branches[last_branch][-1, :]
     # Visit all vertices of the would-be surface and find the chain of connecting branches
-    for vertex in range(n_branch - 1):
+    for _ in range(n_branch - 1):
         if np.allclose(last_vertex, first_vertex):  # one complete cycle is finished
             break
         # Search for branches connecting to the last vertex of the path
@@ -548,8 +544,9 @@ def fit_spline(points, degree_min=3, degree_max=8, continuity='C2', tol=1e-3):
         pts.SetValue(i, gp_Pnt(float(points[i][0]), float(points[i][1]), 0))
     # Construct the spline
     continuity = _spline_continuity_enum(continuity)
-    spline = GeomAPI_PointsToBSpline(pts, degree_min, degree_max, continuity, tol).Curve()
-    return spline
+    return GeomAPI_PointsToBSpline(
+        pts, degree_min, degree_max, continuity, tol
+    ).Curve()
 
 
 def region_as_splinegon(boundary_splines):

@@ -126,10 +126,7 @@ class Segmentation:
             Label image, output of the quick shift algorithm.
         """
 
-        if args:
-            image = args[0]
-        else:
-            image = self.original_image
+        image = args[0] if args else self.original_image
         segment_mask = segmentation.quickshift(image)
         if self.__interactive_mode:
             io.imshow(color.label2rgb(segment_mask, self.original_image, kind='avg'))

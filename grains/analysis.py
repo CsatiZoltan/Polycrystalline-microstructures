@@ -376,7 +376,7 @@ def plot_grain_characteristic(characteristic, centers, interpolation='linear',
     ff = f.copy()
     ff[outside_region] = f_nearest[outside_region]
     # Plot the distribution of the grain characteristic
-    ax = parsed_options['ax'] if parsed_options['ax'] else plt.figure().add_subplot()
+    ax = parsed_options['ax'] or plt.figure().add_subplot()
     # fig, ax = plt.subplots()
     image = ax.imshow(np.flipud(ff.T), interpolation='none', extent=(*x_range, *y_range))
     if not parsed_options['show_axis']:

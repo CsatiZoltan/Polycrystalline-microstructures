@@ -97,9 +97,11 @@ def get_nodes(mesh):
     nodes = mesh.getCoords().toNumPyArray()
     # Get the node groups
     group_names = mesh.getGroupsOnSpecifiedLev(1)
-    node_groups = {}
-    for group_name in group_names:
-        node_groups[group_name] = mesh.getGroupArr(1, group_name).toNumPyArray()
+    node_groups = {
+        group_name: mesh.getGroupArr(1, group_name).toNumPyArray()
+        for group_name in group_names
+    }
+
     return nodes, node_groups
 
 
