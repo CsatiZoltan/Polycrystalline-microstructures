@@ -1,7 +1,7 @@
 scikit-image>=0.13.0
 matplotlib
 skan~=0.8
-scipy~=1.4.1
+scipy~=1.6.3
 tables~=3.6.1
 pandas~=1.0.1
 networkx~=2.4
