@@ -3,7 +3,7 @@ matplotlib
 skan~=0.8
 scipy~=1.4.1
 tables~=3.6.1
-pandas~=1.0.1
+pandas~=1.2.4
 networkx~=2.4
 pyinstrument
 git+git://github.com/bluenote10/PandasDataFrameGUI@master#egg=dfgui
